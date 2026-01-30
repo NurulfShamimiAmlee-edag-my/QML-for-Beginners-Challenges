@@ -1,12 +1,15 @@
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Window {
 
     // TODO: change the size to ensure it forms the standard business card ratio of approx 1:1.586
     // HINT: you may wish to use a binding
+    id: root
 
-    width: 640
-    height: 480
+    width: 480
+    height: 302
 
     visible: true
     title: qsTr("Business Card")
@@ -58,4 +61,143 @@ Window {
           toggle between showing the two categories of information.
         - Use a larger font size for the name
     */
+
+    Rectangle
+    {
+        anchors.fill: parent
+        anchors.margins: 10
+        border.color: "black"
+        border.width: 2
+        radius: 10
+
+        Row
+        {
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 70
+            Column
+            {
+                // anchors.left: parent
+                spacing: 10
+                Text {
+                    id: myName
+                    text: myContactInfo.name
+                    font.bold: true
+                    font.pixelSize: 36
+                }
+
+                Text {
+                    id: myCompany
+                    text: myButton.checked ? myContactInfo.occupation : myContactInfo.company
+                    font.pixelSize: 24
+                }
+
+                Text {
+                    id: myCountry
+                    text: myButton.checked ? myContactInfo.address : myContactInfo.country
+                    font.pixelSize: 15
+                }
+
+                Text {
+                    id: myPhoneNumber
+                    text: myButton.checked ? " " : myContactInfo.phone
+                }
+
+                Text {
+                    id: myEmail
+                    text: myButton.checked ? " " : myContactInfo.email
+                }
+
+                Text {
+                    id: myWebsite
+                    text: myButton.checked ? " " : qsTr(myContactInfo.webSite)
+
+                }
+
+
+                Rectangle
+                {
+                    id: justASpacer
+                    height: 25
+                    width: 100
+                }
+
+                Rectangle
+                {
+                    id: myButton
+                    signal clicked
+                    property bool checkable:  true
+                    property bool checked: false
+
+                    height: 35
+                    width: 100
+
+                    // anchors.bottom: parent.bottom
+
+                    border.color: "black"
+                    color: myButton.checked ? "black" : "white"
+                    radius:  25
+
+                    TapHandler
+                    {
+                        id: myTapHandler
+                        gesturePolicy: TapHandler.WithinBounds
+                        onTapped: {
+                            // toggle the checked property of
+                            // the button
+                            if(myButton.checkable) {
+                                myButton.checked = !myButton.checked
+                            }
+
+                            // emit the button's clicked signal
+                            // in case someone handles it
+                            myButton.clicked()
+                        }
+                    }
+
+                    Text
+                    {
+                        id: myButtonLabel
+                        text: "Details"
+                        color: myButton.checked? "white" : "black"
+                        font.bold: true
+                        font.pixelSize: 10
+                        anchors.centerIn: parent
+
+                    }
+
+                }
+
+            }
+
+            Rectangle
+            {
+                id: myImageRect
+
+                // anchors.right: parent.right
+                anchors.margins: 5
+                width: root.width * 0.3
+                height: root.height *  0.5
+
+                border.color: "black"
+                border.width: 2
+                radius: 3
+
+
+                Image {
+                    id: myImage
+
+                    source: myContactInfo.photo
+                    anchors.centerIn: parent
+                    // anchors.margins: 10
+                    // scale: 0.5
+
+                    width: myImageRect.width * 0.95
+                    height: myImageRect.height * 0.95
+                    fillMode: Image.PreserveAspectFit
+                }
+            }
+        }
+    }
+
 }
