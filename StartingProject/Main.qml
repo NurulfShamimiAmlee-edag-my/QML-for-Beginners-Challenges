@@ -149,6 +149,7 @@ Window {
         }
     }
 
+
     QtObject {
         id: tvControl
 
@@ -158,6 +159,7 @@ Window {
         // There are even 5 channels with sample channelNames.
 
         property int channelNumber: 0
+        readonly property string channelNumberString: `Channel ${channelNumber.toString().padStart(2,"0")}`
         readonly property string channelName: channelNames[channelNumber]
 
         // TV Features
@@ -220,5 +222,367 @@ Window {
         color: "darkred"
 
         onClicked: window.close()
+
+        Image {
+            id: powerButtonImage
+
+            anchors.fill: parent
+            anchors.margins: 10
+
+            source: "images/power.svg"
+        }
     }
+
+    // LCD Screen
+    DoubleBorderGradient {
+        id: lcdScreen
+
+        anchors {
+            top: powerButton.bottom
+            left: parent.left
+            right: parent.right
+            margins: 20
+
+        }
+
+        height: 100
+        radius: 8
+        color:  "#93AA4B"
+        innerMargin: 1
+
+        Item {
+            id: lcdContenItem
+
+            anchors{
+               fill: parent
+               margins: 10
+            }
+
+            opacity: 0.5
+
+            Rectangle {
+                id: volumeIndicator
+
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+
+                width: 12
+                color: "transparent"
+                border {
+                    color: "black"
+                    width: 2
+                }
+
+                Rectangle {
+                    id: volumeValue
+
+                    anchors.bottom: parent.bottom
+                    color: "black"
+                    width: volumeIndicator.width
+                    height: volumeIndicator.height * tvControl.volume
+                    opacity: tvControl.muted? 0.5 : 1
+                }
+            }
+
+            Text {
+                id: channelNumberText
+
+                anchors {
+                    top: parent.top
+                    topMargin: -8
+                    left: parent.left
+                    right: volumeIndicator.left
+                    rightMargin: 4
+                }
+
+                font {
+                    pixelSize: 20
+                }
+
+                text: tvControl.channelNumberString
+                color: "black"
+
+            }
+
+            Text {
+                id: channelName
+
+                anchors {
+                    top: channelNumberText.bottom
+                    topMargin: 5
+                    left: parent.left
+                    right: volumeIndicator.left
+                    rightMargin: 4
+                }
+
+                font {
+                    pixelSize: 16
+                }
+
+                text: tvControl.channelName
+                color: "black"
+
+            }
+
+            Image {
+                id: closedCaptionIcon
+
+                anchors {
+                    top: channelName.bottom
+                    bottom: parent.bottom
+                    left: parent.left
+                    topMargin:  4
+                    bottomMargin:4
+                }
+
+                width: 35
+                height: width
+
+                visible: tvControl.closedCaptionsEnabled
+
+                source: "images/closed_caption.svg"
+
+                fillMode: Image.PreserveAspectFit
+
+            }
+
+            Image {
+                id: hdrIcon
+
+                anchors {
+                    top: channelName.bottom
+                    bottom: parent.bottom
+                    left: closedCaptionIcon.right
+                    topMargin:  4
+                    bottomMargin:4
+                }
+
+                width: 35
+                height: width
+
+                visible: tvControl.hdrEnabled
+
+                source: "images/hdr_on.svg"
+
+                fillMode: Image.PreserveAspectFit
+
+            }
+
+            Image {
+                id: castIcon
+
+                anchors {
+                    top: channelName.bottom
+                    bottom: parent.bottom
+                    left: hdrIcon.right
+                    topMargin:  4
+                    bottomMargin:4
+                }
+
+                width: 35
+                height: width
+
+                visible: tvControl.castConnected
+
+                source: "images/cast_connected.svg"
+
+                fillMode: Image.PreserveAspectFit
+
+            }
+
+            Image {
+                id: micIcon
+
+                anchors {
+                    top: channelName.bottom
+                    bottom: parent.bottom
+                    left: castIcon.right
+                    topMargin:  4
+                    bottomMargin:4
+                }
+
+                width: 35
+                height: width
+
+                source: "images/mic.svg"
+
+                fillMode: Image.PreserveAspectFit
+
+                visible: false
+
+                Timer {
+                    interval: 500
+                    repeat: true
+                    running: tvControl.listening
+                    onTriggered: listeningIcon.visible = !listeningIcon.visible
+                    triggeredOnStart: true
+                    onRunningChanged: if(!running) listeningIcon.visible = false
+                }
+
+            }
+
+            Image {
+                id: muteIcon
+
+                anchors {
+                    bottom: parent.bottom
+                    left: micIcon.right
+                    leftMargin: -7
+                }
+                width: 35
+                height: width
+                source: Qt.resolvedUrl(`images/speaker${tvControl.soundOn ? "" : "_muted"}.svg`)
+                fillMode: Image.PreserveAspectFit
+            }
+
+        }
+
+    }
+
+    Item {
+
+        id: featureButtons
+
+        anchors {
+            top: lcdScreen.bottom
+            topMargin: 25
+
+        }
+
+        CircleButton {
+            id: closedCaptionButton
+
+            anchors
+            {
+                left: parent.left
+                margins: 20
+            }
+
+            width: 40
+            height: width
+
+
+            onClicked: tvControl.closedCaptionsEnabled = !tvControl.closedCaptionsEnabled
+
+            Image {
+                id: ccButtonIcon
+
+                anchors{
+                    centerIn: parent
+                }
+
+                width: closedCaptionButton.width * 0.5
+                height: width
+
+                source: "images/closed_caption_white.svg"
+                fillMode: Image.PreserveAspectFit
+
+            }
+
+        }
+
+        CircleButton {
+            id: hdrButton
+
+            anchors
+            {
+                left: closedCaptionButton.left
+                leftMargin: 55
+            }
+
+            width: 40
+            height: width
+
+
+            onClicked: tvControl.hdrEnabled = !tvControl.hdrEnabled
+
+            Image {
+                id: hdrButtonIcon
+
+                anchors{
+                    centerIn: parent
+                }
+
+                width: hdrButton.width * 0.5
+                height: width
+
+                source: "images/hdr_on_white.svg"
+                fillMode: Image.PreserveAspectFit
+
+            }
+
+        }
+
+        CircleButton {
+            id: castButton
+
+            anchors
+            {
+                left: hdrButton.left
+                leftMargin: 55
+            }
+
+            width: 40
+            height: width
+
+
+            onClicked: tvControl.castConnected = !tvControl.castConnected
+
+            Image {
+                id: castButtonIcon
+
+                anchors{
+                    centerIn: parent
+                }
+
+                width: castButton.width * 0.5
+                height: width
+
+                source: "images/cast_white.svg"
+                fillMode: Image.PreserveAspectFit
+
+            }
+
+        }
+
+        CircleButton {
+            id: muteButton
+
+            anchors
+            {
+                left: castButton.left
+                leftMargin: 55
+            }
+
+            width: 40
+            height: width
+
+
+            onClicked: tvControl.muted = !tvControl.muted
+
+            Image {
+                id: muteButtonIcon
+
+                anchors{
+                    centerIn: parent
+                }
+
+                width: castButton.width * 0.5
+                height: width
+
+                source: "images/speaker_muted_white.svg"
+                fillMode: Image.PreserveAspectFit
+
+            }
+
+        }
+
+    }
+
 }
+
+
+
