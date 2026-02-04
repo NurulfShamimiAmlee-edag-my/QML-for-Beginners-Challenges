@@ -582,6 +582,24 @@ Window {
 
     }
 
+    Item {
+        id: playBackControl
+
+        anchors {
+            top: featureButtons.bottom
+            topMargin: 20
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        width: 200
+        height: 200
+
+        CircleButton {
+
+        }
+
+    }
+
 }
 
 
