@@ -18,6 +18,10 @@ qt_add_qml_module(appIntroToQtQuickControls
     QML_FILES
         Main.qml
     RESOURCES
+    QML_FILES OrderControls.qml
+    QML_FILES Zone1Controls.qml
+    QML_FILES Zone2Controls.qml
+    RESOURCES images/dark/cart_add.svg images/dark/cart_remove.svg images/dark/checkout.svg images/dark/mild.svg images/dark/very_hot.svg images/light/cart_add.svg images/light/cart_remove.svg images/light/checkout.svg images/light/mild.svg images/light/very_hot.svg images/curry.jpg
     # TODO: add the resources you want to use
     # some are provided already in the images and fonts folders
 )

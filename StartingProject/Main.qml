@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Basic
-
+import QtQuick.Layouts
 ApplicationWindow {
     id: window
 
@@ -23,9 +23,19 @@ ApplicationWindow {
     */
 
     width: 640
-    height: 480
+    height: 800
     visible: true
-    title: qsTr("Your Restaurant Name")
+    title: qsTr("My Cottage Restaurant")
 
-    color: "black"
+    background: Image {
+        fillMode: Image.PreserveAspectCrop
+        source: Qt.resolvedUrl("images/curry.jpg")
+        opacity: 0.75
+    }
+
+
+    OrderControls {
+        anchors.fill: parent
+    }
+
 }
